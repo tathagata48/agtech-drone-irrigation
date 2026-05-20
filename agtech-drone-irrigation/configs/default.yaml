@@ -1,0 +1,47 @@
+# configs/default.yaml
+# ============================================================
+# Default configuration for the precision irrigation pipeline.
+# Override individual keys in environment-specific configs.
+# ============================================================
+
+pipeline:
+  # Stress classification threshold in °C.
+  # Plants with mean leaf temp above this value are flagged STRESS.
+  default_temp_threshold: 30.0
+
+  # Minimum contour area (pixels²) for a detection to be counted as a plant.
+  # Smaller blobs are treated as soil noise and discarded.
+  min_plant_area_px: 200
+
+thermal:
+  # Linear mapping: pixel 0 → temp_min_c, pixel 255 → temp_max_c.
+  # For real FLIR / DJI captures, replace these with per-frame EXIF values.
+  temp_min_c: 20.0
+  temp_max_c: 45.0
+
+registration:
+  # Affine correction matrix (dx, dy) in pixels.
+  # Derived from factory chessboard calibration for this payload.
+  # Positive dx = shift thermal RIGHT; positive dy = shift DOWN.
+  correction_dx: -3.0
+  correction_dy: -2.0
+
+segmentation:
+  # HSV thresholds for healthy chlorophyll-bearing vegetation.
+  # Hue 0–179, Saturation 0–255, Value 0–255.
+  hsv_lower: [35, 40, 40]
+  hsv_upper: [85, 255, 255]
+
+  # Morphological kernel size (pixels). Larger = bridges wider leaf gaps
+  # but risks merging adjacent plants.
+  morph_kernel_size: 5
+
+dashboard:
+  # Gradio server settings.
+  host: "0.0.0.0"
+  port: 7860
+  share: true    # Required for Google Colab; set false for local-only use.
+  inline: true   # Render inside Jupyter / Colab cell.
+
+logging:
+  level: "INFO"  # DEBUG | INFO | WARNING | ERROR

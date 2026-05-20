@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.coveragerc
+
+# Linting / type checking
+.ruff_cache/
+.mypy_cache/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project outputs
+results/
+*.jpg
+*.png
+*.tiff
+!assets/sample_data/*.jpg
+!assets/sample_data/*.png
+
+# Jupyter / Colab
+*.ipynb_checkpoints/
+.ipynb_checkpoints/
+
+# Config secrets
+.env
+*.key

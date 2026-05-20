@@ -1,0 +1,66 @@
+name: Benchmarks
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Run every Monday at 07:00 UTC to catch performance regressions
+    - cron: "0 7 * * 1"
+
+jobs:
+  benchmark:
+    name: Pipeline latency benchmark
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e . --quiet
+
+      - name: Run latency benchmark
+        run: |
+          python - <<'EOF'
+          import time, statistics, sys
+          from src.data.synthetic import generate_synthetic_arrays
+          from src.pipeline.fusion import process_precision_irrigation
+
+          rgb, thermal = generate_synthetic_arrays(image_size=500)
+
+          # Warm-up
+          for _ in range(3):
+              process_precision_irrigation(rgb, thermal, 30.0)
+
+          # Measure 20 runs
+          times = []
+          for _ in range(20):
+              t0 = time.perf_counter()
+              process_precision_irrigation(rgb, thermal, 30.0)
+              times.append((time.perf_counter() - t0) * 1000)
+
+          mean_ms   = statistics.mean(times)
+          median_ms = statistics.median(times)
+          stdev_ms  = statistics.stdev(times)
+          fps       = 1000 / mean_ms
+
+          print(f"\n{'='*45}")
+          print(f"  Resolution   : 500×500 px")
+          print(f"  Runs         : {len(times)}")
+          print(f"  Mean latency : {mean_ms:.2f} ms")
+          print(f"  Median       : {median_ms:.2f} ms")
+          print(f"  Std dev      : {stdev_ms:.2f} ms")
+          print(f"  Throughput   : {fps:.1f} FPS")
+          print(f"{'='*45}\n")
+
+          # Regression gate — fail if mean > 200 ms on GitHub runner
+          LATENCY_BUDGET_MS = 200
+          if mean_ms > LATENCY_BUDGET_MS:
+              print(f"FAIL: mean latency {mean_ms:.1f} ms exceeds budget {LATENCY_BUDGET_MS} ms")
+              sys.exit(1)
+          print("PASS: within latency budget")
+          EOF

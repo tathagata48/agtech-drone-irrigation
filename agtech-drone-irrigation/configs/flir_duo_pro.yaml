@@ -1,0 +1,29 @@
+# configs/flir_duo_pro.yaml
+# ============================================================
+# Sensor profile for the FLIR Duo Pro R mounted on a DJI M600.
+# Extends default.yaml — only overrides are listed here.
+#
+# FLIR Duo Pro specs:
+#   • RGB:     4K (3840×2160) CMOS
+#   • Thermal: 160×120 or 320×240 LWIR bolometer, 7.5–13.5 µm
+#   • Thermal range: −40°C to +330°C (low gain) / −40°C to +150°C (high)
+# ============================================================
+
+thermal:
+  # Use FLIR Duo Pro radiometric JPEG temperature range (high-gain mode).
+  # These values MUST be replaced per-flight from the R-JPEG EXIF metadata.
+  # See docs/real_sensor_integration.md for the flirpy extraction snippet.
+  temp_min_c: 15.0   # °C at pixel 0  — calibrate from capture EXIF
+  temp_max_c: 60.0   # °C at pixel 255 — calibrate from capture EXIF
+
+registration:
+  # Offset measured for this payload at 50 m AGL during chessboard calibration.
+  # Re-run calibration if the payload is re-mounted.
+  correction_dx: -5.0
+  correction_dy: -3.0
+
+segmentation:
+  # FLIR Duo Pro RGB camera has a slight warm colour shift vs standard CMOS.
+  # Lower saturation threshold catches early-senescence yellowing.
+  hsv_lower: [30, 35, 35]
+  hsv_upper: [90, 255, 255]

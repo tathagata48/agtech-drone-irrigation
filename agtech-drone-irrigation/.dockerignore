@@ -1,0 +1,25 @@
+# .dockerignore — keep the image slim
+__pycache__/
+*.py[cod]
+*.egg-info/
+.git/
+.github/
+.venv/
+venv/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+coverage.xml
+*.coveragerc
+tests/
+docs/
+.env
+*.swp
+*.DS_Store
+results/
+*.jpg
+*.png
+*.tiff

@@ -1,0 +1,10 @@
+# Development / testing dependencies
+-r requirements.txt
+
+pytest>=7.4
+pytest-cov>=4.1
+pytest-xdist>=3.3        # parallel test execution (-n auto)
+ruff>=0.1.0              # linter
+black>=23.0              # formatter
+mypy>=1.5                # type checking
+pre-commit>=3.4
